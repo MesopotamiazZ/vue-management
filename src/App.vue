@@ -14,4 +14,10 @@ export default {
   *
     margin: 0
     padding: 0
+  #app
+    position: absolute
+    top: 0
+    bottom: 0
+    margin: auto
+    width: 100%
 </style>

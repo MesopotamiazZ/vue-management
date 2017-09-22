@@ -20,6 +20,11 @@ export default new Router({
     },
     {
       path: '/',
+      redirect: '/login',
+      hidden: true
+    },
+    {
+      path: '/home',
       name: '账本',
       component: Home,
       iconCls: 'icon-tools',
@@ -31,21 +36,21 @@ export default new Router({
       ]
     },
     {
-      path: '/',
+      path: '/home',
       name: '统计',
       component: Home,
       iconCls: 'icon-chart',
-      leaf: false, // 是否只有一个节点
+      leaf: true, // 是否只有一个节点
       children: [
         {path: '/statistics', component: Statistics, name: '统计'}
       ]
     },
     {
-      path: '/',
+      path: '/home',
       name: '说明',
       component: Home,
       iconCls: 'icon-explain',
-      leaf: false,
+      leaf: true,
       children: [
         {path: '/desc', component: Desc, name: '说明'}
       ]
