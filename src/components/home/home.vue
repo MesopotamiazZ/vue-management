@@ -15,7 +15,7 @@
     </el-col><!-- header -->
     <el-col :span="24" class="main">
       <aside :class="!isCollapse? 'full-aside':'little-aside'" ref="aside">
-        <el-menu :default-active="$route.path" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
+        <el-menu :default-active="$route.path" class="el-menu-vertical" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
           <!-- <el-submenu index="1">
             <template slot="title">
               <i class="icon-tools"></i>
@@ -150,11 +150,14 @@ export default {
     content: "\e908"
     color: #cdcdcd
 
-
+  html 
+    overflow-y: hidden
+    overflow-x: hidden
   .container
     position: absolute
     top: 0
-    left: 0
+    // left: 0
+    bottom: 0
     width: 100%
     .header
       height: 60px
@@ -194,11 +197,14 @@ export default {
       .full-aside
         flex: 0 0 230px
         width: 230px
+        height: 100%
         // vertical-align: top
         .el-menu-item-group__title
           padding: 0
         .tab-item
           margin: 0 25px 0 5px
+        .el-menu-vertical
+          height: 100%
       .little-aside
         flex: 0 0 64px
         width: 64px
@@ -209,9 +215,13 @@ export default {
           margin: 0 25px 0 5px
         .title
           font-size: 0
+        .el-menu-vertical
+          height: 100%
       .content-container
         flex: 1
-        padding: 15px
+        padding: 10px 20px 70px
+        // overflow-x: hidden
+        overflow-y: auto
         .grid-content
           .top-title
             .title
@@ -223,6 +233,7 @@ export default {
           .content-wrapper
             background-color: #fff
             box-sizing: border-box
+          
         
         
 

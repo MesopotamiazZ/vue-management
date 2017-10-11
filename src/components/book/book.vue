@@ -1,9 +1,9 @@
 <template>
 	<section>
-		<el-col :span="24" class="toolbar">
+		<el-col :span="24" class="toolbar toolbartop">
 			<el-form :inline="true">
         <el-form-item>
-          <el-button type="primary" v-on:click="remark">记录</el-button>
+          <el-button type="primary" v-on:click="remark">记账</el-button>
         </el-form-item>
       </el-form>
 		</el-col><!--工具条-->
@@ -32,7 +32,7 @@
         </template>
       </el-table-column>
     </el-table><!--列表项-->
-    <el-col :span="24" class="toolbar">
+    <el-col :span="24" class="toolbar toolbarbottom">
       <el-button type="danger" @click="batchRemove" :disabled="this.multipleSelection.length===0">批量删除</el-button>
       <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="pageSize" :total="total" :page="page">
       </el-pagination>
@@ -86,7 +86,7 @@
         })
       },
       formatterAccount (row, column) {
-        return row.baccount + '.00'
+        return '￥' + row.baccount
       },
       formatterCategory (row, column) {
         let categoryNum = row.bcategory
@@ -104,6 +104,33 @@
   }
 </script>
 
-<style>
-
+<style lang="stylus" rel="stylesheet/stylus">
+  .toolbartop
+    width: 100%
+    height: 50px
+    background-color: #EFF2F7
+    margin-bottom: 10px
+    margin-top: 10px
+    .el-form
+      height: 50px
+      position: relative
+      .el-button
+        position: absolute
+        top: 7px
+        left: 10px
+  .toolbarbottom
+    width: 100%
+    height: 50px
+    background-color: #EFF2F7
+    margin-bottom: 10px
+    margin-top: 10px
+    position: relative
+    .el-button
+      position: absolute
+      top: 7px
+      left: 10px
+    .el-pagination
+      position: absolute
+      top: 7px
+      right: 10px
 </style>
