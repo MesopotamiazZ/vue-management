@@ -1,5 +1,5 @@
 <template>
-	<el-form :model="ruleForm1" :rules="rules1" label-position="left" label-width="70px" class="login-contaier">
+	<el-form :model="ruleForm1" :rules="rules1" label-position="left" label-width="70px" class="login-contaier" ref="ruleForm1">
     <h3 class="title">系统登录</h3>
     <el-form-item prop="username" label="用户名">
       <el-input type="text" v-model="ruleForm1.username" auto-complete="off" placeholder="用户名"></el-input>
@@ -16,6 +16,8 @@
 </template>
 
 <script>
+// import {requestLogin} from '../../api/api.js'
+// import axios from 'axios'
 export default {
   data () {
     return {
@@ -34,6 +36,9 @@ export default {
       checked: true,
       logining: false
     }
+  },
+  beforeCreate () {
+    // 在vue实例创建之前验证sessionStorage中是否存有登录信息，以判断是否鞥路过
   },
   methods: {
     handleSubmit () {

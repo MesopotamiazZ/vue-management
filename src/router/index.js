@@ -7,6 +7,7 @@ import Book from '../components/book/book'
 import Note from '../components/note/note'
 import Desc from '../components/desc/desc'
 import Statistics from '../components/statistics/statistics'
+import AllUsers from '../components/allUsers/allUsers'
 
 Vue.use(Router)
 
@@ -43,6 +44,15 @@ export default new Router({
       leaf: true, // 是否只有一个节点
       children: [
         {path: '/statistics', component: Statistics, name: '统计'}
+      ]
+    },
+    {
+      path: '/home',
+      name: '管理',
+      component: Home,
+      leaf: false,
+      children: [
+        {path: '/allUsers', component: AllUsers, name: '用户查看'}
       ]
     },
     {

@@ -12,13 +12,13 @@
       </el-table-column>
       <el-table-column type="index" width="60">
       </el-table-column>
-      <el-table-column prop="name" label="日期" width="120">
+      <el-table-column prop="bdate" label="日期" width="120">
       </el-table-column>
-      <el-table-column prop="sex" label="金额" width="100">
+      <el-table-column prop="baccount" label="金额" width="100" :formatter="formatterAccount">
       </el-table-column>
-      <el-table-column prop="age" label="类别" width="100">
+      <el-table-column prop="bcategory" label="类别" width="100" :formatter="formatterCategory">
       </el-table-column>
-      <el-table-column prop="birth" label="备注" width="180">
+      <el-table-column prop="bremark" label="备注" width="180">
       </el-table-column>
       <el-table-column label="操作">
         <template scope="scope">
@@ -34,14 +34,14 @@
     </el-table><!--列表项-->
     <el-col :span="24" class="toolbar">
       <el-button type="danger" @click="batchRemove" :disabled="this.multipleSelection.length===0">批量删除</el-button>
-      <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total">
+      <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="pageSize" :total="total" :page="page">
       </el-pagination>
     </el-col>
 	</section>
 </template>
 
 <script>
-  // import axios from 'axios'
+  import axios from 'axios'
   export default {
     data () {
       return {
@@ -49,11 +49,13 @@
         listLoading: false, // table是否需要加载
         multipleSelection: [], // 记录用户的选择项
         total: 0, // 账本数据条数
-        page: 1 // 分页数
+        page: 1, // 分页数
+        pageSize: 20
       }
     },
     created () {
       // vue实例创建完成后进行加载
+      this.getAccountBooks()
     },
     methods: {
       remark () {
@@ -72,7 +74,31 @@
         // 批量删除
       },
       handleCurrentChange () {
-        // currentPage改变是触发
+        // currentPage改变时触发
+      },
+      getAccountBooks () {
+        // vue实例创建完成后对其进行分页查询
+        this.listLoading = true
+        axios.get('http://localhost:3000/get-book', {params: {start: this.page, end: this.pageSize}}).then((res) => {
+          this.total = res.data[1]
+          this.accountBooks = res.data[0]
+          this.listLoading = false
+        })
+      },
+      formatterAccount (row, column) {
+        return row.baccount + '.00'
+      },
+      formatterCategory (row, column) {
+        let categoryNum = row.bcategory
+        if (categoryNum === 1) {
+          return '居家'
+        } else if (categoryNum === 2) {
+          return '交通'
+        } else if (categoryNum === 3) {
+          return '餐饮'
+        } else {
+          return '购物'
+        }
       }
     }
   }
