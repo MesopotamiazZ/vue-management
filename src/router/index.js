@@ -50,6 +50,7 @@ export default new Router({
       path: '/home',
       name: '管理',
       component: Home,
+      iconCls: 'icon-manage',
       leaf: false,
       children: [
         {path: '/allUsers', component: AllUsers, name: '用户查看'}

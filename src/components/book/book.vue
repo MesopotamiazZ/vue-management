@@ -3,7 +3,7 @@
 		<el-col :span="24" class="toolbar toolbartop">
 			<el-form :inline="true">
         <el-form-item>
-          <el-button type="primary" v-on:click="remark">记账</el-button>
+          <el-button type="primary" v-on:click="record">记一笔</el-button>
         </el-form-item>
       </el-form>
 		</el-col><!--工具条-->
@@ -18,7 +18,9 @@
       </el-table-column>
       <el-table-column prop="bcategory" label="类别" width="100" :formatter="formatterCategory">
       </el-table-column>
-      <el-table-column prop="bremark" label="备注" width="180">
+      <el-table-column prop="bincomeorpay" label="收支" width="100" :formatter="formatterIncomeOrPay">
+      </el-table-column>
+      <el-table-column prop="bremark" label="备注" width="250">
       </el-table-column>
       <el-table-column label="操作">
         <template scope="scope">
@@ -37,6 +39,39 @@
       <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="pageSize" :total="total" :page="page">
       </el-pagination>
     </el-col>
+
+    <el-dialog title="记一笔" :visible.sync="dialogFormVisible">
+      <el-form :model="form">
+        <el-form-item label="收支" :label-width="formLabelWidth">
+          <el-select v-model="form.incomeorpay" placeholder="请选择收支类型">
+            <el-option label="支出" value="0"></el-option>
+            <el-option label="收入" value="1"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="日期" :label-width="formLabelWidth">
+          <el-date-picker v-model="form.time" type="date" placeholder="选择日期">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="金额" :label-width="formLabelWidth">
+          <el-input v-model="form.money" auto-complete="off" placeholder="￥0.00"></el-input>
+        </el-form-item>
+        <el-form-item label="类别" :label-width="formLabelWidth">
+          <el-select v-model="form.category" placeholder="请选择分类">
+            <el-option label="居家" value="1"></el-option>
+            <el-option label="交通" value="2"></el-option>
+            <el-option label="餐饮" value="3"></el-option>
+            <el-option label="购物" value="4"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="备注" :label-width="formLabelWidth">
+          <el-input v-model="form.remark" type="textarea" :rows="3" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
 	</section>
 </template>
 
@@ -50,7 +85,16 @@
         multipleSelection: [], // 记录用户的选择项
         total: 0, // 账本数据条数
         page: 1, // 分页数
-        pageSize: 20
+        pageSize: 20,
+        dialogFormVisible: false,
+        form: {
+          incomeorpay: '0',
+          time: '',
+          money: '',
+          category: '',
+          remark: ''
+        },
+        formLabelWidth: '50px'
       }
     },
     created () {
@@ -58,8 +102,9 @@
       this.getAccountBooks()
     },
     methods: {
-      remark () {
-
+      record () {
+        // 点击记账触发此事件
+        this.dialogFormVisible = true
       },
       handleSelectionChange (val) {
         this.multipleSelection = val
@@ -99,12 +144,17 @@
         } else {
           return '购物'
         }
+      },
+      formatterIncomeOrPay (row, column) {
+        return row.bincomeorpay !== 0 ? '支出' : '收入'
       }
     }
   }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+  .el-input__inner
+    width: 192px
   .toolbartop
     width: 100%
     height: 50px

@@ -117,6 +117,7 @@ export default {
     font-variant: normal
     text-transform: none
     line-height: 1
+    font-size: 20px
 
     /* Better Font Rendering =========== */
     -webkit-font-smoothing: antialiased
@@ -148,6 +149,9 @@ export default {
     color: #cdcdcd
   .icon-main:before
     content: "\e908"
+    color: #cdcdcd
+  .icon-manage:before
+    content "\e909"
     color: #cdcdcd
 
   html 
