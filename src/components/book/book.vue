@@ -40,23 +40,23 @@
       </el-pagination>
     </el-col>
 
-    <el-dialog title="记一笔" :visible.sync="dialogFormVisible">
-      <el-form :model="form">
+    <el-dialog title="记一笔" :visible.sync="addFormVisible">
+      <el-form :model="addform">
         <el-form-item label="收支" :label-width="formLabelWidth">
-          <el-select v-model="form.incomeorpay" placeholder="请选择收支类型">
+          <el-select v-model="addform.bincomeorpay" placeholder="请选择收支类型">
             <el-option label="支出" value="0"></el-option>
             <el-option label="收入" value="1"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="日期" :label-width="formLabelWidth">
-          <el-date-picker v-model="form.time" type="date" placeholder="选择日期">
+          <el-date-picker v-model="addform.bdate" type="date" placeholder="选择日期">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="金额" :label-width="formLabelWidth">
-          <el-input v-model="form.money" auto-complete="off" placeholder="￥0.00"></el-input>
+          <el-input v-model="addform.baccount" auto-complete="off" placeholder="￥0.00"></el-input>
         </el-form-item>
         <el-form-item label="类别" :label-width="formLabelWidth">
-          <el-select v-model="form.category" placeholder="请选择分类">
+          <el-select v-model="addform.bcategory" placeholder="请选择分类">
             <el-option label="居家" value="1"></el-option>
             <el-option label="交通" value="2"></el-option>
             <el-option label="餐饮" value="3"></el-option>
@@ -64,12 +64,45 @@
           </el-select>
         </el-form-item>
         <el-form-item label="备注" :label-width="formLabelWidth">
-          <el-input v-model="form.remark" type="textarea" :rows="3" auto-complete="off"></el-input>
+          <el-input v-model="addform.bremark" type="textarea" :rows="3" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        <el-button @click="addFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="编辑" :visible.sync="editFormVisible">
+      <el-form :model="editform">
+        <el-form-item label="收支" :label-width="formLabelWidth">
+          <el-select v-model="editform.bincomeorpay" placeholder="请选择收支类型">
+            <el-option label="支出" value="0"></el-option>
+            <el-option label="收入" value="1"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="日期" :label-width="formLabelWidth">
+          <el-date-picker v-model="editform.bdate" type="date" placeholder="选择日期">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="金额" :label-width="formLabelWidth">
+          <el-input v-model="editform.baccount" auto-complete="off" placeholder="￥0.00"></el-input>
+        </el-form-item>
+        <el-form-item label="类别" :label-width="formLabelWidth">
+          <el-select v-model="editform.bcategory" placeholder="请选择分类">
+            <el-option label="居家" value="1"></el-option>
+            <el-option label="交通" value="2"></el-option>
+            <el-option label="餐饮" value="3"></el-option>
+            <el-option label="购物" value="4"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="备注" :label-width="formLabelWidth">
+          <el-input v-model="editform.bremark" type="textarea" :rows="3" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editFormVisible = false">确 定</el-button>
       </div>
     </el-dialog>
 	</section>
@@ -86,13 +119,21 @@
         total: 0, // 账本数据条数
         page: 1, // 分页数
         pageSize: 20,
-        dialogFormVisible: false,
-        form: {
-          incomeorpay: '0',
-          time: '',
-          money: '',
-          category: '',
-          remark: ''
+        addFormVisible: false,
+        editFormVisible: false,
+        addform: {
+          bincomeorpay: '0',
+          bdate: '',
+          baccount: '',
+          bcategory: '',
+          bremark: ''
+        },
+        editform: {
+          bincomeorpay: '',
+          bdate: '',
+          baccount: '',
+          bcategory: '',
+          bremark: ''
         },
         formLabelWidth: '50px'
       }
@@ -104,13 +145,29 @@
     methods: {
       record () {
         // 点击记账触发此事件
-        this.dialogFormVisible = true
+        this.addFormVisible = true
       },
       handleSelectionChange (val) {
         this.multipleSelection = val
       },
       handleEdit (index, row) {
-        console.log(index, row)
+        console.log(row)
+        this.editFormVisible = true
+        this.editform = Object.assign({}, row)
+        if (this.editform.bincomeorpay === 0) {
+          this.editform.bincomeorpay = '支出'
+        } else {
+          this.editform.bincomeorpay = '收入'
+        }
+        if (this.editform.bcategory === 1) {
+          this.editform.bcategory = '居家'
+        } else if (this.editform.bcategory === 2) {
+          this.editform.bcategory = '交通'
+        } else if (this.editform.bcategory === 3) {
+          this.editform.bcategory = '餐饮'
+        } else {
+          this.editform.bcategory = '购物'
+        }
       },
       handleDelete (index, row) {
         console.log(index, row)
@@ -146,7 +203,7 @@
         }
       },
       formatterIncomeOrPay (row, column) {
-        return row.bincomeorpay !== 0 ? '支出' : '收入'
+        return row.bincomeorpay !== 0 ? '收入' : '支出'
       }
     }
   }
