@@ -36,7 +36,7 @@
     </el-table><!--列表项-->
     <el-col :span="24" class="toolbar toolbarbottom">
       <el-button type="danger" @click="batchRemove" :disabled="this.multipleSelection.length===0">批量删除</el-button>
-      <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="pageSize" :total="total" :page="page">
+      <el-pagination layout="total, prev, pager, next" @current-change="handleCurrentChange" :page-size="pageSize" :total="total" :page="page">
       </el-pagination>
     </el-col>
 
@@ -118,7 +118,7 @@
         multipleSelection: [], // 记录用户的选择项
         total: 0, // 账本数据条数
         page: 1, // 分页数
-        pageSize: 20,
+        pageSize: 10,
         addFormVisible: false,
         editFormVisible: false,
         addform: {
@@ -175,8 +175,16 @@
       batchRemove () {
         // 批量删除
       },
-      handleCurrentChange () {
+      handleCurrentChange (val) {
         // currentPage改变时触发
+        this.listLoading = true
+        this.page = val
+        console.log(this.page)
+        axios.get('http://localhost:3000/get-book', {params: {start: this.page, end: this.pageSize}}).then((res) => {
+          this.total = res.data[1]
+          this.accountBooks = res.data[0]
+          this.listLoading = false
+        })
       },
       getAccountBooks () {
         // vue实例创建完成后对其进行分页查询
