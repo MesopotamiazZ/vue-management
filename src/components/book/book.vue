@@ -41,22 +41,22 @@
     </el-col>
 
     <el-dialog title="记一笔" :visible.sync="addFormVisible">
-      <el-form :model="addform">
+      <el-form :model="addForm" :rules="addFormRules" ref="addForm">
         <el-form-item label="收支" :label-width="formLabelWidth">
-          <el-select v-model="addform.bincomeorpay" placeholder="请选择收支类型">
+          <el-select v-model="addForm.bincomeorpay" placeholder="请选择收支类型">
             <el-option label="支出" value="0"></el-option>
             <el-option label="收入" value="1"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="日期" :label-width="formLabelWidth">
-          <el-date-picker v-model="addform.bdate" type="date" placeholder="选择日期">
+          <el-date-picker v-model="addForm.bdate" type="date" placeholder="选择日期">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="金额" :label-width="formLabelWidth">
-          <el-input v-model="addform.baccount" auto-complete="off" placeholder="￥0.00"></el-input>
+          <el-input v-model="addForm.baccount" auto-complete="off" placeholder="￥0.00"></el-input>
         </el-form-item>
         <el-form-item label="类别" :label-width="formLabelWidth">
-          <el-select v-model="addform.bcategory" placeholder="请选择分类">
+          <el-select v-model="addForm.bcategory" placeholder="请选择分类">
             <el-option label="居家" value="1"></el-option>
             <el-option label="交通" value="2"></el-option>
             <el-option label="餐饮" value="3"></el-option>
@@ -64,32 +64,32 @@
           </el-select>
         </el-form-item>
         <el-form-item label="备注" :label-width="formLabelWidth">
-          <el-input v-model="addform.bremark" type="textarea" :rows="3" auto-complete="off"></el-input>
+          <el-input v-model="addForm.bremark" type="textarea" :rows="3" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="addFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addFormVisible = false">确 定</el-button>
+        <el-button type="primary" @click="addSubmit">确 定</el-button>
       </div>
     </el-dialog>
 
     <el-dialog title="编辑" :visible.sync="editFormVisible">
-      <el-form :model="editform">
+      <el-form :model="editForm">
         <el-form-item label="收支" :label-width="formLabelWidth">
-          <el-select v-model="editform.bincomeorpay" placeholder="请选择收支类型">
+          <el-select v-model="editForm.bincomeorpay" placeholder="请选择收支类型">
             <el-option label="支出" value="0"></el-option>
             <el-option label="收入" value="1"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="日期" :label-width="formLabelWidth">
-          <el-date-picker v-model="editform.bdate" type="date" placeholder="选择日期">
+          <el-date-picker v-model="editForm.bdate" type="date" placeholder="选择日期">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="金额" :label-width="formLabelWidth">
-          <el-input v-model="editform.baccount" auto-complete="off" placeholder="￥0.00"></el-input>
+          <el-input v-model="editForm.baccount" auto-complete="off" placeholder="￥0.00"></el-input>
         </el-form-item>
         <el-form-item label="类别" :label-width="formLabelWidth">
-          <el-select v-model="editform.bcategory" placeholder="请选择分类">
+          <el-select v-model="editForm.bcategory" placeholder="请选择分类">
             <el-option label="居家" value="1"></el-option>
             <el-option label="交通" value="2"></el-option>
             <el-option label="餐饮" value="3"></el-option>
@@ -97,7 +97,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="备注" :label-width="formLabelWidth">
-          <el-input v-model="editform.bremark" type="textarea" :rows="3" auto-complete="off"></el-input>
+          <el-input v-model="editForm.bremark" type="textarea" :rows="3" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -110,6 +110,8 @@
 
 <script>
   import axios from 'axios'
+  // var moment = require('moment')
+  import moment from 'moment'
   export default {
     data () {
       return {
@@ -121,21 +123,30 @@
         pageSize: 10,
         addFormVisible: false,
         editFormVisible: false,
-        addform: {
+        addForm: {
           bincomeorpay: '0',
           bdate: '',
           baccount: '',
           bcategory: '',
           bremark: ''
         },
-        editform: {
+        editForm: {
           bincomeorpay: '',
           bdate: '',
           baccount: '',
           bcategory: '',
           bremark: ''
         },
-        formLabelWidth: '50px'
+        formLabelWidth: '50px',
+        addFormRules: {
+          baccount: [
+            {
+              required: true,
+              message: '请输入金额',
+              trigger: 'blur'
+            }
+          ]
+        }
       }
     },
     created () {
@@ -147,26 +158,49 @@
         // 点击记账触发此事件
         this.addFormVisible = true
       },
+      addSubmit () {
+        this.$refs.addForm.validate((valid) => {
+          if (valid) {
+            this.$confirm('确认提交吗？', '提示', {}).then(() => {
+              let para = Object.assign({}, this.addForm)
+              para.bdate = (!para.bdate || para.bdate === '') ? '' : moment(para.bdate).format('YYYY-MM-DD')
+              console.log(typeof para.bdate, para.baccount, para.bcategory)
+              axios.get('http://localhost:3000/add-book', {params: {uid: 1, bdate: para.bdate, bincomeorpay: para.bincomeorpay, baccount: para.baccount, bcategory: para.bcategory, bremark: para.bremark}}).then((res) => {
+                this.$message({
+                  message: '提交成功',
+                  type: 'success'
+                })
+                this.$refs.addForm.resetFields()
+                this.addFormVisible = false
+                this.getAccountBooks()
+              })
+              // .catch((error) => {
+              //   console.log(error)
+              // })
+            })
+          }
+        })
+      },
       handleSelectionChange (val) {
         this.multipleSelection = val
       },
       handleEdit (index, row) {
         console.log(row)
         this.editFormVisible = true
-        this.editform = Object.assign({}, row)
-        if (this.editform.bincomeorpay === 0) {
-          this.editform.bincomeorpay = '支出'
+        this.editForm = Object.assign({}, row)
+        if (this.editForm.bincomeorpay === 0) {
+          this.editForm.bincomeorpay = '支出'
         } else {
-          this.editform.bincomeorpay = '收入'
+          this.editForm.bincomeorpay = '收入'
         }
-        if (this.editform.bcategory === 1) {
-          this.editform.bcategory = '居家'
-        } else if (this.editform.bcategory === 2) {
-          this.editform.bcategory = '交通'
-        } else if (this.editform.bcategory === 3) {
-          this.editform.bcategory = '餐饮'
+        if (this.editForm.bcategory === 1) {
+          this.editForm.bcategory = '居家'
+        } else if (this.editForm.bcategory === 2) {
+          this.editForm.bcategory = '交通'
+        } else if (this.editForm.bcategory === 3) {
+          this.editForm.bcategory = '餐饮'
         } else {
-          this.editform.bcategory = '购物'
+          this.editForm.bcategory = '购物'
         }
       },
       handleDelete (index, row) {
@@ -180,11 +214,7 @@
         this.listLoading = true
         this.page = val
         console.log(this.page)
-        axios.get('http://localhost:3000/get-book', {params: {start: this.page, end: this.pageSize}}).then((res) => {
-          this.total = res.data[1]
-          this.accountBooks = res.data[0]
-          this.listLoading = false
-        })
+        this.getAccountBooks()
       },
       getAccountBooks () {
         // vue实例创建完成后对其进行分页查询
