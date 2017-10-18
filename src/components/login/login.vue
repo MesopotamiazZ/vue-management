@@ -1,5 +1,5 @@
 <template>
-	<el-form :model="ruleForm1" :rules="rules1" label-position="left" label-width="70px" class="login-contaier" ref="ruleForm1">
+	<el-form :model="ruleForm1" :rules="loginRules" label-position="left" label-width="70px" class="login-contaier" ref="ruleForm1">
     <h3 class="title">系统登录</h3>
     <el-form-item prop="username" label="用户名">
       <el-input type="text" v-model="ruleForm1.username" auto-complete="off" placeholder="用户名"></el-input>
@@ -25,7 +25,7 @@ export default {
         username: '',
         password: ''
       },
-      rules1: {
+      loginRules: {
         username: [
           {required: true, message: '请输入账号', trigger: 'blur'}
         ],

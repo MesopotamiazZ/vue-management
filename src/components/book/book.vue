@@ -12,6 +12,8 @@
       </el-table-column>
       <el-table-column type="index" width="60">
       </el-table-column>
+      <el-table-column prop="bid" label="bid" width="60">
+      </el-table-column>
       <el-table-column prop="bdate" label="日期" width="120">
       </el-table-column>
       <el-table-column prop="baccount" label="金额" width="100" :formatter="formatterAccount">
@@ -74,7 +76,7 @@
     </el-dialog>
 
     <el-dialog title="编辑" :visible.sync="editFormVisible">
-      <el-form :model="editForm">
+      <el-form :model="editForm" :rules="editFormRules" ref="editForm">
         <el-form-item label="收支" :label-width="formLabelWidth">
           <el-select v-model="editForm.bincomeorpay" placeholder="请选择收支类型">
             <el-option label="支出" value="0"></el-option>
@@ -102,7 +104,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="editFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editFormVisible = false">确 定</el-button>
+        <el-button type="primary" @click="editSubmit">确 定</el-button>
       </div>
     </el-dialog>
 	</section>
@@ -110,7 +112,6 @@
 
 <script>
   import axios from 'axios'
-  // var moment = require('moment')
   import moment from 'moment'
   export default {
     data () {
@@ -140,11 +141,18 @@
         formLabelWidth: '50px',
         addFormRules: {
           baccount: [
-            {
-              required: true,
-              message: '请输入金额',
-              trigger: 'blur'
-            }
+            {required: true, message: '请输入金额', trigger: 'blur'}
+          ],
+          bdate: [
+             { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
+          ]
+        },
+        editFormRules: {
+          baccount: [
+            {required: true, message: '请输入金额', trigger: 'blur'}
+          ],
+          bdate: [
+             { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
           ]
         }
       }
@@ -159,12 +167,13 @@
         this.addFormVisible = true
       },
       addSubmit () {
+        // 增加记账
         this.$refs.addForm.validate((valid) => {
           if (valid) {
             this.$confirm('确认提交吗？', '提示', {}).then(() => {
               let para = Object.assign({}, this.addForm)
+              console.log(para.bincomeorpay, para.bcategory)
               para.bdate = (!para.bdate || para.bdate === '') ? '' : moment(para.bdate).format('YYYY-MM-DD')
-              console.log(typeof para.bdate, para.baccount, para.bcategory)
               axios.get('http://localhost:3000/add-book', {params: {uid: 1, bdate: para.bdate, bincomeorpay: para.bincomeorpay, baccount: para.baccount, bcategory: para.bcategory, bremark: para.bremark}}).then((res) => {
                 this.$message({
                   message: '提交成功',
@@ -188,23 +197,64 @@
         console.log(row)
         this.editFormVisible = true
         this.editForm = Object.assign({}, row)
-        if (this.editForm.bincomeorpay === 0) {
-          this.editForm.bincomeorpay = '支出'
-        } else {
-          this.editForm.bincomeorpay = '收入'
-        }
-        if (this.editForm.bcategory === 1) {
-          this.editForm.bcategory = '居家'
-        } else if (this.editForm.bcategory === 2) {
-          this.editForm.bcategory = '交通'
-        } else if (this.editForm.bcategory === 3) {
-          this.editForm.bcategory = '餐饮'
-        } else {
-          this.editForm.bcategory = '购物'
-        }
+        // if (this.editForm.bincomeorpay === 0) {
+        //   this.editForm.bincomeorpay = '支出'
+        // } else {
+        //   this.editForm.bincomeorpay = '收入'
+        // }
+        // if (this.editForm.bcategory === 1) {
+        //   this.editForm.bcategory = '居家'
+        // } else if (this.editForm.bcategory === 2) {
+        //   this.editForm.bcategory = '交通'
+        // } else if (this.editForm.bcategory === 3) {
+        //   this.editForm.bcategory = '餐饮'
+        // } else {
+        //   this.editForm.bcategory = '购物'
+        // }
+      },
+      editSubmit () {
+        this.$refs.editForm.validate((valid) => {
+          if (valid) {
+            this.$confirm('确认提交吗？', '提示', {}).then(() => {
+              let para = Object.assign({}, this.editForm)
+              para.bdate = (!para.bdate || para.bdate === '') ? '' : moment(para.bdate).format('YYYY-MM-DD')
+              // if (para.bcategory === '居家') {
+              //   para.bcategory = 1
+              // } else if (para.bcategory === '交通') {
+              //   para.bcategory = 2
+              // } else if (para.bcategory === '餐饮') {
+              //   para.bcategory = 3
+              // } else {
+              //   para.bcategory = 4
+              // }
+              // if (para.bincomeorpay === '支出') {
+              //   para.bincomeorpay = 0
+              // } else {
+              //   para.bincomeorpay = 1
+              // }
+              axios.get('http://localhost:3000/update-book', {params: {uid: 1, bdate: para.bdate, bincomeorpay: para.bincomeorpay, baccount: para.baccount, bcategory: para.bcategory, bremark: para.bremark, bid: para.bid}}).then((res) => {
+                this.$message({
+                  message: '提交成功',
+                  type: 'success'
+                })
+                this.$refs.editForm.resetFields()
+                this.editFormVisible = false
+                this.getAccountBooks()
+              })
+            })
+          }
+        })
       },
       handleDelete (index, row) {
         console.log(index, row)
+        let bid = row.bid
+        axios.get('http://localhost:3000/delete-book', {params: {bid: bid}}).then((res) => {
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          })
+          this.getAccountBooks()
+        })
       },
       batchRemove () {
         // 批量删除
@@ -213,7 +263,6 @@
         // currentPage改变时触发
         this.listLoading = true
         this.page = val
-        console.log(this.page)
         this.getAccountBooks()
       },
       getAccountBooks () {
