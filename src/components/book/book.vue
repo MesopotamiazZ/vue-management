@@ -258,6 +258,15 @@
       },
       batchRemove () {
         // 批量删除
+        for (let i = 0; i < this.multipleSelection.length; i++) {
+          axios.get('http://localhost:3000/delete-book', {params: {bid: this.multipleSelection[i].bid}}).then((res) => {
+            this.$message({
+              message: '删除成功',
+              type: 'success'
+            })
+            this.getAccountBooks()
+          })
+        }
       },
       handleCurrentChange (val) {
         // currentPage改变时触发
@@ -327,4 +336,10 @@
       position: absolute
       top: 7px
       right: 10px
+  .el-table__row
+    td
+      .cell
+        white-space: nowrap
+        overflow: hidden
+        text-overflow: ellipsis
 </style>
