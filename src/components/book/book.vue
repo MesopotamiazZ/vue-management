@@ -124,6 +124,7 @@
         pageSize: 10,
         addFormVisible: false,
         editFormVisible: false,
+        user: sessionStorage.getItem('user'),
         addForm: {
           bincomeorpay: '0',
           bdate: '',
@@ -172,9 +173,9 @@
           if (valid) {
             this.$confirm('确认提交吗？', '提示', {}).then(() => {
               let para = Object.assign({}, this.addForm)
-              console.log(para.bincomeorpay, para.bcategory)
               para.bdate = (!para.bdate || para.bdate === '') ? '' : moment(para.bdate).format('YYYY-MM-DD')
-              axios.get('http://localhost:3000/add-book', {params: {uid: 1, bdate: para.bdate, bincomeorpay: para.bincomeorpay, baccount: para.baccount, bcategory: para.bcategory, bremark: para.bremark}}).then((res) => {
+              let uid = JSON.parse(this.user)[0].uid
+              axios.get('http://localhost:3000/add-book', {params: {uid: uid, bdate: para.bdate, bincomeorpay: para.bincomeorpay, baccount: para.baccount, bcategory: para.bcategory, bremark: para.bremark}}).then((res) => {
                 this.$message({
                   message: '提交成功',
                   type: 'success'
@@ -232,7 +233,8 @@
               // } else {
               //   para.bincomeorpay = 1
               // }
-              axios.get('http://localhost:3000/update-book', {params: {uid: 1, bdate: para.bdate, bincomeorpay: para.bincomeorpay, baccount: para.baccount, bcategory: para.bcategory, bremark: para.bremark, bid: para.bid}}).then((res) => {
+              let uid = JSON.parse(this.user)[0].uid
+              axios.get('http://localhost:3000/update-book', {params: {uid: uid, bdate: para.bdate, bincomeorpay: para.bincomeorpay, baccount: para.baccount, bcategory: para.bcategory, bremark: para.bremark, bid: para.bid}}).then((res) => {
                 this.$message({
                   message: '提交成功',
                   type: 'success'
@@ -277,7 +279,8 @@
       getAccountBooks () {
         // vue实例创建完成后对其进行分页查询
         this.listLoading = true
-        axios.get('http://localhost:3000/get-book', {params: {start: this.page, end: this.pageSize}}).then((res) => {
+        let uid = JSON.parse(this.user)[0].uid
+        axios.get('http://localhost:3000/get-book', {params: {uid: uid, start: this.page, end: this.pageSize}}).then((res) => {
           this.total = res.data[1]
           this.accountBooks = res.data[0]
           this.listLoading = false

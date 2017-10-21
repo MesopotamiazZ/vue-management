@@ -17,7 +17,7 @@
 
 <script>
 // import {requestLogin} from '../../api/api.js'
-// import axios from 'axios'
+import axios from 'axios'
 export default {
   data () {
     return {
@@ -43,6 +43,25 @@ export default {
   methods: {
     handleSubmit () {
       // 登录
+      let para = Object.assign({}, this.ruleForm1)
+      this.$refs.ruleForm1.validate((valid) => {
+        if (valid) {
+          this.logining = true
+          axios.get('http://localhost:3000/get-hasUser', {params: {username: para.username, password: para.password}}).then((res) => {
+            this.logining = false
+            if (res.data.length === 0) {
+              this.$message.error('用户名或密码不正确')
+            } else {
+              if (res.data[0].password !== para.password) {
+                this.$message.error('用户名或密码不正确')
+              } else {
+                sessionStorage.setItem('user', JSON.stringify(res.data))
+                this.$router.push({path: '/main'})
+              }
+            }
+          })
+        }
+      })
     }
   }
 }
