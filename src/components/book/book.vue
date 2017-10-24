@@ -279,6 +279,9 @@
       getAccountBooks () {
         // vue实例创建完成后对其进行分页查询
         this.listLoading = true
+        if (this.user === null) {
+          this.$router.push({path: '/login'})
+        }
         let uid = JSON.parse(this.user)[0].uid
         axios.get('http://localhost:3000/get-book', {params: {uid: uid, start: this.page, end: this.pageSize}}).then((res) => {
           this.total = res.data[1]

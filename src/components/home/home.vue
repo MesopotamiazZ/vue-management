@@ -10,7 +10,7 @@
         </div>
       </el-col>
       <el-col :span="10" class="userinfo">
-        用户信息
+        <user-info :userInfo="user"></user-info>
       </el-col>
     </el-col><!-- header -->
     <el-col :span="24" class="main">
@@ -74,11 +74,13 @@
 </template>
 
 <script>
+import UserInfo from '../userInfo/userInfo'
 export default {
   data () {
     return {
       sysName: 'VUEBOOK',
-      isCollapse: false
+      isCollapse: false,
+      user: JSON.parse(sessionStorage.getItem('user'))[0]
     }
   },
   methods: {
@@ -91,6 +93,9 @@ export default {
     clickMenu () {
       this.isCollapse = !this.isCollapse
     }
+  },
+  components: {
+    UserInfo: UserInfo
   }
 }
 
