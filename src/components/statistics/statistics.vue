@@ -47,6 +47,8 @@ export default {
 </script>
 	
 <style lang="stylus" rel="stylesheet/stylus">
-	.echarts
-		margin-top: 20px
+.echarts
+  margin-top: 20px
+  .el-collapse-item__content
+    padding: 0  
 </style>
