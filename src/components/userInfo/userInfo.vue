@@ -40,6 +40,7 @@
 <style lang="stylus" rel="stylesheet/stylus">
   .userInfo
     cursor: pointer
+    padding-right: 25px
     .userinfo-inner
       color: #fff
       font-size: 17px

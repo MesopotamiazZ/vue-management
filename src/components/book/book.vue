@@ -63,6 +63,7 @@
             <el-option label="交通" value="2"></el-option>
             <el-option label="餐饮" value="3"></el-option>
             <el-option label="购物" value="4"></el-option>
+            <el-option label="公司" value="5"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="备注" :label-width="formLabelWidth">
@@ -96,6 +97,7 @@
             <el-option label="交通" value="2"></el-option>
             <el-option label="餐饮" value="3"></el-option>
             <el-option label="购物" value="4"></el-option>
+            <el-option label="公司" value="5"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="备注" :label-width="formLabelWidth">
@@ -300,8 +302,10 @@
           return '交通'
         } else if (categoryNum === 3) {
           return '餐饮'
-        } else {
+        } else if (categoryNum === 4) {
           return '购物'
+        } else {
+          return '公司'
         }
       },
       formatterIncomeOrPay (row, column) {

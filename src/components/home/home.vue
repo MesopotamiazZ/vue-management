@@ -46,7 +46,7 @@
                 </el-menu-item>
               </el-menu-item-group>
             </el-submenu>
-            <el-menu-item v-if="item.leaf&&item.children.length>0" :index="item.children[0].path"><i :class="item.iconCls" class="tab-item" v-on:click="$router.push(item.children[0].path)">
+            <el-menu-item v-if="item.leaf&&item.children.length>0" :index="item.children[0].path" v-on:click="$router.push(item.children[0].path)"><i :class="item.iconCls" class="tab-item">
               </i><span slot="title" class="title">{{item.children[0].name}}</span>
             </el-menu-item>
           </template>

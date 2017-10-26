@@ -11,13 +11,14 @@
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
-    "element-ui": "^1.4.4",
-    "vue": "^2.4.2",
-    "vue-router": "^2.7.0",
-    "stylus": "^0.54.5",
     "axios": "^0.16.2",
+    "echarts": "^3.7.2",
+    "element-ui": "^1.4.4",
+    "moment": "^2.19.0",
     "mysql": "^2.13.0",
-    "moment": "^2.19.0"
+    "stylus": "^0.54.5",
+    "vue": "^2.4.2",
+    "vue-router": "^2.7.0"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
