@@ -1,6 +1,6 @@
 <template>
 	<section>
-		欢迎使用VUEBOOK！
+		<p>欢迎使用VUEBOOK :)</p>
 	</section>
 </template>
 
@@ -10,6 +10,8 @@
 
 </script>
 
-<style>
-
+<style lang="stylus" rel="stylesheet/stylus">
+  p
+    padding-top: 15px
+    font-size: 30px 
 </style>
